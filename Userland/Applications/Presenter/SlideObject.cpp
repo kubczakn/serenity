@@ -49,10 +49,13 @@ ErrorOr<NonnullRefPtr<SlideObject>> SlideObject::parse_slide_object(JsonObject c
 SlideObject::SlideObject()
 {
     REGISTER_RECT_PROPERTY("rect", rect, set_rect);
+    REGISTER_INT_PROPERTY("frame", frame, set_frame);
 }
 
 // FIXME: Consider drawing a placeholder box instead.
 void SlideObject::paint(Gfx::Painter&, Gfx::FloatSize) const { }
+
+bool SlideObject::is_visible_during_frame(unsigned frame_number) const { return m_frame <= frame_number; }
 
 Gfx::IntRect SlideObject::transformed_bounding_box(Gfx::IntRect clip_rect, Gfx::FloatSize display_scale) const
 {

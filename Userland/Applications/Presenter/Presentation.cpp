@@ -45,9 +45,10 @@ StringView Presentation::author() const
 void Presentation::next_frame()
 {
     m_current_frame_in_slide++;
-    if (m_current_frame_in_slide >= current_slide().frame_count()) {
-        m_current_frame_in_slide = 0;
+    if (m_current_frame_in_slide > current_slide().max_frame()) {
+        unsigned int original_slide = m_current_slide.value();
         m_current_slide = min(m_current_slide.value() + 1u, m_slides.size() - 1);
+        m_current_frame_in_slide = original_slide == m_slides.size() - 1 ? current_slide().max_frame() : 0; 
     }
 }
 
@@ -55,8 +56,9 @@ void Presentation::previous_frame()
 {
     m_current_frame_in_slide.sub(1);
     if (m_current_frame_in_slide.has_overflow()) {
+        unsigned int original_slide = m_current_slide.value(); 
         m_current_slide.saturating_sub(1);
-        m_current_frame_in_slide = m_current_slide == 0u ? 0 : current_slide().frame_count() - 1;
+        m_current_frame_in_slide = original_slide == 0u ? 0 : current_slide().max_frame(); 
     }
 }
 

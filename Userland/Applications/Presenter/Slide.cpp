@@ -12,9 +12,10 @@
 #include <LibGfx/Size.h>
 #include <LibGfx/TextAlignment.h>
 
-Slide::Slide(NonnullRefPtrVector<SlideObject> slide_objects, DeprecatedString title)
+Slide::Slide(NonnullRefPtrVector<SlideObject> slide_objects, DeprecatedString title, unsigned int max_frame)
     : m_slide_objects(move(slide_objects))
     , m_title(move(title))
+    , m_max_frame(max_frame)
 {
 }
 
@@ -27,6 +28,8 @@ ErrorOr<Slide> Slide::parse_slide(JsonObject const& slide_json, NonnullRefPtr<GU
     if (!maybe_slide_objects.is_array())
         return Error::from_string_view("Slide objects must be an array"sv);
 
+    unsigned int max_frame = 0;
+
     auto const& json_slide_objects = maybe_slide_objects.as_array();
     NonnullRefPtrVector<SlideObject> slide_objects;
     for (auto const& maybe_slide_object_json : json_slide_objects.values()) {
@@ -35,10 +38,12 @@ ErrorOr<Slide> Slide::parse_slide(JsonObject const& slide_json, NonnullRefPtr<GU
         auto const& slide_object_json = maybe_slide_object_json.as_object();
 
         auto slide_object = TRY(SlideObject::parse_slide_object(slide_object_json, window));
+        max_frame = max(max_frame, slide_object->frame());
+
         slide_objects.append(move(slide_object));
     }
 
-    return Slide { move(slide_objects), title };
+    return Slide { move(slide_objects), title, max_frame };
 }
 
 void Slide::paint(Gfx::Painter& painter, unsigned int current_frame, Gfx::FloatSize display_scale) const

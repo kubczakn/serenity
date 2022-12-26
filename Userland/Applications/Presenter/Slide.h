@@ -18,14 +18,16 @@ public:
     static ErrorOr<Slide> parse_slide(JsonObject const& slide_json, NonnullRefPtr<GUI::Window> window);
 
     // FIXME: shouldn't be hard-coded to 1.
-    unsigned frame_count() const { return 1; }
+    unsigned max_frame() const { return m_max_frame; }
     StringView title() const { return m_title; }
 
     void paint(Gfx::Painter&, unsigned current_frame, Gfx::FloatSize display_scale) const;
 
 private:
-    Slide(NonnullRefPtrVector<SlideObject> slide_objects, DeprecatedString title);
+    Slide(NonnullRefPtrVector<SlideObject> slide_objects, DeprecatedString title, unsigned int max_frame);
 
     NonnullRefPtrVector<SlideObject> m_slide_objects;
     DeprecatedString m_title;
+
+    unsigned int m_max_frame;
 };

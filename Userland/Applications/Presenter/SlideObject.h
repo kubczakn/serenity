@@ -32,7 +32,7 @@ public:
     static ErrorOr<NonnullRefPtr<SlideObject>> parse_slide_object(JsonObject const& slide_object_json, NonnullRefPtr<GUI::Window> window);
 
     // FIXME: Actually determine this from the file data.
-    bool is_visible_during_frame([[maybe_unused]] unsigned frame_number) const { return true; }
+    bool is_visible_during_frame(unsigned frame_number) const; 
 
     virtual void paint(Gfx::Painter&, Gfx::FloatSize display_scale) const;
     ALWAYS_INLINE Gfx::IntRect transformed_bounding_box(Gfx::IntRect clip_rect, Gfx::FloatSize display_scale) const;
@@ -40,10 +40,15 @@ public:
     void set_rect(Gfx::IntRect rect) { m_rect = rect; }
     Gfx::IntRect rect() const { return m_rect; }
 
+    void set_frame(unsigned int frame) { m_frame = frame; }
+    unsigned int frame() { return m_frame; }
+
 protected:
     SlideObject();
 
     Gfx::IntRect m_rect;
+
+    unsigned int m_frame = 0;
 };
 
 // Objects with a foreground color.
